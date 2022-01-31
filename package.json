@@ -4,7 +4,7 @@
   "description": "",
   "main": "./src/api/app.js",
   "scripts": {
-    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "test": "jest --runInBand --forceExit",
     "start": "node .",
     "dev": "nodemon ."
   },
@@ -16,6 +16,7 @@
     "express": "^4.17.2",
     "jest": "^27.4.7",
     "joi": "^17.6.0",
+    "mongodb": "^4.3.1",
     "supertest": "^6.2.2"
   },
   "devDependencies": {
