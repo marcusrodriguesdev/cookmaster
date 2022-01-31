@@ -21,7 +21,9 @@ describe('1 - Crie um endpoint para o cadastro de usuários', () => {
 
   beforeEach(async () => {
     await db.collection('users').deleteMany({});
-    const obj = { name: 'Marcus', email: 'marcusrodriguesdev@gmail.com', password: '1234567' };
+    const obj = {
+      name: 'Marcus', email: 'marcusrodriguesdev@gmail.com', password: '1234567', role: 'admin',
+    };
     await db.collection('users').insertOne(obj);
   });
 
@@ -103,5 +105,85 @@ describe('1 - Crie um endpoint para o cadastro de usuários', () => {
     expect(res.body.user).toHaveProperty('email');
     expect(res.body.user).toHaveProperty('role');
     expect(res.body.user).toHaveProperty('_id');
+  });
+});
+
+describe('2 - Crie um endpoint para o login de usuários', () => {
+  let connection;
+  let db;
+
+  beforeAll(async () => {
+    connection = await MongoClient.connect(mongoDbUrl, OPTIONS);
+    db = connection.db('Cookmaster');
+    await db.collection('users').deleteMany({});
+  });
+
+  beforeEach(async () => {
+    await db.collection('users').deleteMany({});
+    const obj = {
+      name: 'Marcus', email: 'marcusrodriguesdev@gmail.com', password: '1234567', role: 'admin',
+    };
+    await db.collection('users').insertOne(obj);
+  });
+
+  afterEach(async () => {
+    await db.collection('users').deleteMany({});
+  });
+
+  afterAll(async () => {
+    await connection.close();
+  });
+
+  it('Será validado que o campo "email" é obrigatório', async () => {
+    const res = await request(server)
+      .post('/login')
+      .send({
+        password: '12345678',
+      });
+    expect(res.statusCode).toEqual(401);
+    expect(res.body).toEqual({ message: 'All fields must be filled' });
+  });
+
+  it('Será validado que o campo "password" é obrigatório', async () => {
+    const res = await request(server)
+      .post('/login')
+      .send({
+        email: 'marcus.rodrigues@gmail.com',
+      });
+    expect(res.statusCode).toEqual(401);
+    expect(res.body).toEqual({ message: 'All fields must be filled' });
+  });
+
+  it('Será validado que não é possível fazer login com um email inválido', async () => {
+    const res = await request(server)
+      .post('/login')
+      .send({
+        email: 'marcusrodrigues@',
+        password: '12345678',
+      });
+    expect(res.statusCode).toEqual(401);
+    expect(res.body).toEqual({ message: 'Incorrect username or password' });
+  });
+
+  it('Será validado que não é possível fazer login com uma senha inválida', async () => {
+    const res = await request(server)
+      .post('/login')
+      .send({
+        email: 'marcusemail@gmail.com',
+        password: '123',
+      });
+    expect(res.statusCode).toEqual(401);
+    expect(res.body).toEqual({ message: 'Incorrect username or password' });
+  });
+
+  it('Será validado que é possível fazer login com sucesso', async () => {
+    const res = await request(server)
+      .post('/login')
+      .send({
+        email: 'marcusvinicius@gmail.com',
+        password: '1234567',
+      });
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.token).not.toBeNull();
   });
 });
