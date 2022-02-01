@@ -1,4 +1,5 @@
 const request = require('supertest');
+require('dotenv').config();
 const { MongoClient } = require('mongodb');
 const server = require('../src/api/server');
 
