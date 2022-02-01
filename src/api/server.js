@@ -5,6 +5,6 @@ const routerUsers = require('./routes/users.router');
 const app = express();
 
 app.use(bodyParser.json());
-app.use('/users', routerUsers);
+app.use(routerUsers);
 
 module.exports = app;
