@@ -181,7 +181,7 @@ describe('2 - Crie um endpoint para o login de usuários', () => {
     const res = await request(server)
       .post('/login')
       .send({
-        email: 'marcusvinicius@gmail.com',
+        email: 'marcusrodriguesdev@gmail.com',
         password: '1234567',
       });
     expect(res.statusCode).toEqual(200);
