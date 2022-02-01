@@ -20,7 +20,16 @@ const findUserByEmail = async (email) => {
   return query;
 };
 
+const loginUser = async (dataUser) => {
+  const { email, password } = dataUser;
+  const db = await connection();
+  const query = await db.collection('users').insertOne({ email, password });
+
+  return query;
+};
+
 module.exports = {
   registerUser,
   findUserByEmail,
+  loginUser,
 };
